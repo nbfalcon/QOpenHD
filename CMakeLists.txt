@@ -128,7 +128,7 @@ set_property(TARGET QOpenHDApp APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
 include(lib/h264/h264.cmake)
 #include(app/videostreaming/avcodec/avcodec_video.cmake)
 #include(app/videostreaming/android/videostreamingandroid.cmake)
-#include(app/videostreaming/gstreamer/gst_video.cmake)
+include(app/videostreaming/gstreamer/gst_video.cmake)
 
 qt_finalize_executable(QOpenHDApp)
 #include(GNUInstallDirs)

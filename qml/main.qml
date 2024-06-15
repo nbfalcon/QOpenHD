@@ -25,8 +25,8 @@ ApplicationWindow {
 
     //width: 850
     //height: 480
-    width: (settings.general_screen_rotation == 90 || settings.general_screen_rotation == 270) ? m_window_height : m_window_width
-    height: (settings.general_screen_rotation == 90 || settings.general_screen_rotation == 270) ? m_window_width : m_window_height
+    width: (settings.general_screen_rotation === 90 || settings.general_screen_rotation === 270) ? m_window_height : m_window_width
+    height: (settings.general_screen_rotation === 90 || settings.general_screen_rotation === 270) ? m_window_width : m_window_height
 
     onWidthChanged: {
         _qrenderstats.set_window_width(width)
@@ -35,8 +35,8 @@ ApplicationWindow {
         _qrenderstats.set_window_height(height)
     }
 
-    contentOrientation: settings.general_screen_rotation===0 ? Qt.PortraitOrientation : Qt.LandscapeOrientation
-    contentItem.rotation: settings.general_screen_rotation
+    // contentOrientation: settings.general_screen_rotation===0 ? Qt.PortraitOrientation : Qt.LandscapeOrientation
+    // contentItem.rotation: settings.general_screen_rotation
 
     //minimumWidth: 850
     //minimumHeight: 480
@@ -45,7 +45,7 @@ ApplicationWindow {
     // but rather done independently by using a pipeline that directly goes to the HW composer (e.g. mmal on pi).
     //color: "transparent" //Consti10 transparent background
     //color : "#2C3E50" // reduce KREBS
-    color: settings.app_background_transparent ? "transparent" : "#2C3E50"
+    // color: settings.app_background_transparent ? "transparent" : "#2C3E50"
     //flags: Qt.WindowStaysOnTopHint| Qt.FramelessWindowHint| Qt.X11BypassWindowManagerHint;
     //flags: Qt.WindowStaysOnTopHint| Qt.X11BypassWindowManagerHint;
     //visibility: "FullScreen"
@@ -67,8 +67,8 @@ ApplicationWindow {
     Item{
         // rotation: settings.general_screen_rotation
         anchors.centerIn: parent
-        width: (settings.general_screen_rotation == 90 || settings.general_screen_rotation == 270) ? parent.height : parent.width
-        height: (settings.general_screen_rotation == 90 || settings.general_screen_rotation == 270) ? parent.width : parent.height
+        width: (settings.general_screen_rotation === 90 || settings.general_screen_rotation === 270) ? parent.height : parent.width
+        height: (settings.general_screen_rotation === 90 || settings.general_screen_rotation === 270) ? parent.width : parent.height
 
         // Loads the proper (platform-dependent) video widget for the main (primary) video
         // primary video is always full-screen and behind the HUD OSD Elements

@@ -155,7 +155,7 @@ ScrollView {
                         Component.onCompleted: {
                             for (var i = 0; i < model.count; i++) {
                                 var choice = model.get(i);
-                                if (choice.value == settings.general_screen_rotation) {
+                                if (choice.value === settings.general_screen_rotation) {
                                     currentIndex = i;
                                 }
                             }

@@ -44,7 +44,13 @@ static void init_gstreamer(int argc,char* argv[]){
         qWarning("gst_init_check failed");
         return;
     }
-    qDebug("gst_init_check success");
+    GstElement *qmlgl6sink = gst_element_factory_make("qml6glsink", "prepare_gst_qml6");
+    if (qmlgl6sink == nullptr) {
+        qCritical("Failed to init qml6glsink!");
+        return;
+    }
+    g_object_unref(G_OBJECT(qmlgl6sink));
+    qInfo("gst_init_check success");
 }
 
 // If qmlgl plugin was dynamically linked, this will force GStreamer to go find it and
@@ -54,7 +60,7 @@ static void init_gstreamer(int argc,char* argv[]){
 // NOTE: Basically, it looks as if you NEED to do this before QT loads any .qml file(s) and if it fails
 // qmlglsink won't work !!
 static bool init_qmlglsink(){
-    GstElement *sink = gst_element_factory_make("qmlglsink", NULL);
+    GstElement *sink = gst_element_factory_make("qml6glsink", nullptr);
     if(sink==nullptr){
         return false;
     }

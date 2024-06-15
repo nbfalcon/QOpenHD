@@ -70,7 +70,7 @@ static std::string gst_create_video_decoder(const QOpenHDVideoHelper::VideoCodec
     // NOTE: force sw only has an effect on when decodebin does hw automatically, and on h264
     if(videoCodec==QOpenHDVideoHelper::VideoCodecH264){
         //NOTE: decodebin on rpi for h264 only worked after we updated the kernel.
-        ss<<"h264parse ! ";
+        // ss<<"h264parse ! ";
         ss<<"decodebin ! ";
     }else if(videoCodec==QOpenHDVideoHelper::VideoCodecH265){
         //ss<<"h265parse ! ";
@@ -111,9 +111,8 @@ static std::string constructGstreamerPipeline(const QOpenHDVideoHelper::VideoStr
     if(false){
         ss<<"nvvidconv ! glupload  ! qmlglsink name=qmlglsink sync=false";
     }else{
-        ss << " queue ! ";
-        ss << " glupload ! glcolorconvert !";
-        ss << " qmlglsink name=qmlglsink sync=false";
+        ss << " videoconvert ! glupload !";
+        ss << " qml6glsink name=qmlglsink sync=false";
     }
     return ss.str();
 }
@@ -287,11 +286,11 @@ void GstQmlGlSinkStream::startVideo() {
     m_pipeline = gst_parse_launch(pipeline.c_str(), &error);
     qDebug() << "GSTREAMER PIPE=[" << pipeline.c_str()<<"]";
     if (error) {
-        qDebug() << "gst_parse_launch error: " << error->message;
+        qCritical() << "gst_parse_launch error: " << error->message;
         return;
     }
     if(!m_pipeline || !(GST_IS_PIPELINE(m_pipeline))){
-        qDebug()<<"Cannot construct pipeline";
+        qCritical()<<"Cannot construct pipeline";
         m_pipeline = nullptr;
         return;
     }
@@ -304,7 +303,10 @@ void GstQmlGlSinkStream::startVideo() {
 
     link_gstreamer_pipe_to_qt_window(m_pipeline,m_videoOutputWindow);
 
-    gst_element_set_state (m_pipeline, GST_STATE_PLAYING);
+    GstStateChangeReturn result = gst_element_set_state(m_pipeline, GST_STATE_PLAYING);
+    if (result == GST_STATE_CHANGE_FAILURE) {
+        qCritical("Failed to start pipeline!");
+    }
     lastDataTimeout = QDateTime::currentMSecsSinceEpoch();
     qDebug()<<"GstQmlGlSinkStream::startVideo() end";
 }
@@ -316,7 +318,7 @@ void GstQmlGlSinkStream::stopVideoSafe() {
         gst_element_send_event ((GstElement*)m_pipeline, gst_event_new_eos ());
         gst_element_set_state(m_pipeline, GST_STATE_PAUSED);
         gst_element_set_state (m_pipeline, GST_STATE_NULL);
-        gst_object_unref (m_pipeline);
+        gst_object_unref (G_OBJECT(m_pipeline));
         m_pipeline=nullptr;
     }
     qDebug() << "GstQmlGlSinkStream::stopVideoSafe()::end";
